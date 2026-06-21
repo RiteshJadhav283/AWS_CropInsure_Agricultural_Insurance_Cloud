@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropInsure Agricultural Insurance Cloud</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts for modern clean typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js for clean analytics widgets -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- 1. AUTHENTICATION CONTAINER (LOGIN / SIGNUP) -->
+    <div id="auth-container" class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <span class="auth-logo">🌾</span>
+                <h2>CropInsure <span class="accent-text">Cloud</span></h2>
+                <p>Enterprise Agricultural Risk & Claims Portal</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
+                <h3>Sign In</h3>
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required placeholder="e.g. farmer_rajesh">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn primary-btn w-full">Sign In</button>
+                <p class="auth-switch">Don't have an account? <a href="#" onclick="toggleAuthForms('signup')">Sign Up</a></p>
+                
+                <div class="demo-credentials">
+                    <h4>Demo Accounts (Password: <code>pass123</code>):</h4>
+                    <ul>
+                        <li>Farmer: <code>farmer_rajesh</code></li>
+                        <li>Claims Adjuster: <code>adjuster_sunita</code></li>
+                        <li>System Manager: <code>admin_amit</code></li>
+                        <li>Billing Manager: <code>billing_priya</code></li>
+                    </ul>
+                </div>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" class="auth-form" onsubmit="handleSignup(event)">
+                <h3>Create Account</h3>
+                <div class="form-group">
+                    <label for="signup-fullname">Full Name</label>
+                    <input type="text" id="signup-fullname" required placeholder="Rajesh Patel">
+                </div>
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" required placeholder="farmer_rajesh">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="signup-role">Role</label>
+                    <select id="signup-role" required>
+                        <option value="farmer">Farmer / Policyholder</option>
+                        <option value="adjuster">Claims Adjuster (Approvals)</option>
+                        <option value="admin">System Manager (Prometheus)</option>
+                        <option value="billing">Billing & Pricing Manager</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="signup-region">Operational Region</label>
+                    <input type="text" id="signup-region" required placeholder="Midwest-US">
+                </div>
+                <button type="submit" class="btn primary-btn w-full">Create Account</button>
+                <p class="auth-switch">Already have an account? <a href="#" onclick="toggleAuthForms('login')">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. MAIN APPLICATION CONTAINER (VISIBLE POST LOGIN) -->
+    <div id="app-container" style="display: none;">
+        <header>
+            <div class="header-container">
+                <div class="logo">
+                    <span class="logo-icon">🌾</span>
+                    <h1>CropInsure <span class="accent-text">Cloud</span></h1>
+                </div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span id="header-user-name" class="user-fullname">Rajesh Patel</span>
+                        <span id="header-user-role" class="user-role-badge">Farmer</span>
+                    </div>
+                    <button class="btn secondary-btn" onclick="handleLogout()">Log Out</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-container">
+            
+            <!-- A. FARMER DASHBOARD -->
+            <section id="dashboard-farmer" class="dashboard-view">
+                <div class="view-header">
+                    <h2>Farmer Insurance Workspace</h2>
+                    <p>Manage crop coverage, register acres, and submit loss claims.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Policy acquisition -->
+                    <div class="card">
+                        <h3>Acquire Crop Policy</h3>
+                        <form id="policy-form" onsubmit="submitPolicy(event)">
+                            <div class="form-group">
+                                <label>Farmer Name</label>
+                                <input type="text" id="farmer-display-name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Crop Type</label>
+                                <select id="crop-type">
+                                    <option value="Corn">Corn</option>
+                                    <option value="Soybeans">Soybeans</option>
+                                    <option value="Wheat">Wheat</option>
+                                    <option value="Rice">Rice</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Acreage (Acres)</label>
+                                <input type="number" id="acreage" value="100" min="1" required oninput="calculateEstimates()">
+                            </div>
+                            <div class="form-group">
+                                <label>Sum Insured (₹)</label>
+                                <input type="text" id="sum-insured" value="₹1,20,000" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Premium Rate (5% Annually)</label>
+                                <input type="text" id="premium" value="₹6,000" readonly>
+                            </div>
+                            <button type="submit" class="btn primary-btn">Purchase Policy</button>
+                        </form>
+                    </div>
+
+                    <!-- Submit claim -->
+                    <div class="card">
+                        <h3>File Loss Claim</h3>
+                        <form id="claim-form" onsubmit="submitClaim(event)">
+                            <div class="form-group">
+                                <label>Select Associated Policy</label>
+                                <select id="claim-policy-select" onchange="updateClaimFormCrop()"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Crop Insured</label>
+                                <input type="text" id="claim-crop-type" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Estimated Damage (%)</label>
+                                <input type="range" id="damage-pct" min="10" max="100" value="50" oninput="updateDamageValue(this.value)">
+                                <span id="damage-pct-val" class="field-feedback">50% Damage</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Requested Payout Claim (₹)</label>
+                                <input type="text" id="claim-amount" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Remarks / Description of Loss</label>
+                                <textarea id="claim-remarks" placeholder="Provide loss details (e.g. extreme hailstorm, drought)" required></textarea>
+                            </div>
+                            <button type="submit" class="btn warning-btn">Submit Claim</button>
+                        </form>
+                    </div>
+
+                    <!-- Policies Table -->
+                    <div class="card col-span-2">
+                        <h3>Your Active Policies</h3>
+                        <div class="table-container">
+                            <table id="policies-table">
+                                <thead>
+                                    <tr>
+                                        <th>Policy Number</th>
+                                        <th>Crop</th>
+                                        <th>Acreage</th>
+                                        <th>Sum Insured</th>
+                                        <th>Premium</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Claims History with Adjuster Notes -->
+                    <div class="card col-span-2">
+                        <h3>Claims Processing History & Adjuster Notes</h3>
+                        <div class="table-container">
+                            <table id="farmer-claims-table">
+                                <thead>
+                                    <tr>
+                                        <th>Claim ID</th>
+                                        <th>Crop</th>
+                                        <th>Loss Date</th>
+                                        <th>Damage %</th>
+                                        <th>Claim Amount</th>
+                                        <th>Status</th>
+                                        <th>Adjuster Comments</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- B. CLAIMS ADJUSTER DASHBOARD -->
+            <section id="dashboard-adjuster" class="dashboard-view">
+                <div class="view-header">
+                    <h2>Claims Investigation Workspace</h2>
+                    <p>Review filed claims, verify agricultural NDVI satellite values, and approve payouts.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Claims Queue -->
+                    <div class="card col-span-2">
+                        <h3>Incoming Claims Review Queue</h3>
+                        <div class="table-container">
+                            <table id="claims-table">
+                                <thead>
+                                    <tr>
+                                        <th>Claim ID</th>
+                                        <th>Crop</th>
+                                        <th>Damage Est</th>
+                                        <th>Claim Amt</th>
+                                        <th>NDVI Index</th>
+                                        <th>Status</th>
+                                        <th>Review</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Satellite Remote Sensing Verification -->
+                    <div class="card" id="adjuster-inspection-card">
+                        <h3>NDVI Satellite Verification</h3>
+                        <p class="info-text">Select a claim from the queue to run remote sensing analysis.</p>
+                        <div id="ndvi-inspection-details" style="display: none;">
+                            <div class="ndvi-guage-container">
+                                <div class="ndvi-bar">
+                                    <div id="ndvi-marker" class="ndvi-marker"></div>
+                                </div>
+                                <div class="ndvi-labels">
+                                    <span>0.0 (Severe Loss)</span>
+                                    <span id="ndvi-numerical-val" style="font-weight: bold; color: var(--primary-color);">0.32</span>
+                                    <span>1.0 (Healthy Forest)</span>
+                                </div>
+                            </div>
+                            <div class="alert-box" id="ndvi-analysis-result"></div>
+                            
+                            <div class="form-group">
+                                <label for="adjuster-notes">Investigation Notes / Remarks</label>
+                                <textarea id="adjuster-notes" placeholder="Specify approval/rejection audit trail notes..." required></textarea>
+                            </div>
+                            <div class="btn-group">
+                                <button onclick="processClaim('Approved')" class="btn success-btn">Approve Claim</button>
+                                <button onclick="processClaim('Rejected')" class="btn danger-btn">Reject Claim</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Processed Claims History -->
+                    <div class="card">
+                        <h3>Audit History (Your Decisions)</h3>
+                        <div class="table-container">
+                            <table id="adjuster-history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Claim ID</th>
+                                        <th>Action</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- C. SYSTEM MANAGER DASHBOARD (PROMETHEUS & SCRIPTS) -->
+            <section id="dashboard-admin" class="dashboard-view">
+                <div class="view-header">
+                    <h2>Infrastructure Monitoring & Linux Manager</h2>
+                    <p>Track resources, scrape active Prometheus gauges, and run server maintenance cron scripts.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Standard dials and charts -->
+                    <div class="card">
+                        <h3>EC2 Resource Utilization</h3>
+                        <div class="metrics-row">
+                            <div class="metric-dial">
+                                <span class="metric-label">CPU Usage</span>
+                                <span class="metric-value" id="cpu-val">0.0%</span>
+                            </div>
+                            <div class="metric-dial">
+                                <span class="metric-label">RAM Usage</span>
+                                <span class="metric-value" id="ram-val">0.0%</span>
+                            </div>
+                        </div>
+                        <canvas id="metricsChart" height="150"></canvas>
+                    </div>
+
+                    <!-- Simulated Prometheus Scraper -->
+                    <div class="card">
+                        <h3>Prometheus Scrape Target (Live Text)</h3>
+                        <p class="section-desc">Raw metric format streamed from <code>http://localhost:3694/api/monitoring/prometheus</code></p>
+                        <div class="prometheus-console">
+                            <pre id="prometheus-output">Loading Prometheus scrape output...</pre>
+                        </div>
+                    </div>
+
+                    <!-- Script Runner -->
+                    <div class="card">
+                        <h3>Linux Automation Terminal</h3>
+                        <p class="section-desc">Run system management shell scripts on the backend host EC2 instance:</p>
+                        <div class="btn-grid">
+                            <button onclick="runAdminScript('backup.sh')" class="btn primary-btn">Database S3 Backup</button>
+                            <button onclick="runAdminScript('monitor.sh')" class="btn primary-btn">System Health Check</button>
+                            <button onclick="runAdminScript('user_setup.sh')" class="btn primary-btn">Provision IAM Groups</button>
+                        </div>
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <span>cropinsure-linux-host:~#</span>
+                            </div>
+                            <pre id="terminal-output">Select an automation script above to execute...</pre>
+                        </div>
+                    </div>
+
+                    <!-- S3 backup file list & VPC logs -->
+                    <div class="card">
+                        <h3>S3 Backup Vault & VPC Firewall Logs</h3>
+                        <p class="bucket-title">Bucket: <code>s3://cropinsure-backups-us-east-1</code></p>
+                        <div class="s3-list" id="s3-files"></div>
+                        <hr>
+                        <p class="bucket-title">VPC Traffic Logs (Security Groups)</p>
+                        <div class="logs-console" id="vpc-logs"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- D. BILLING & PRICING DASHBOARD -->
+            <section id="dashboard-billing" class="dashboard-view">
+                <div class="view-header">
+                    <h2>AWS Cost Management & Billing Workspace</h2>
+                    <p>Calculate multi-region redundancy budgets, audit SLA limits, and optimize cloud infrastructure.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Calculator -->
+                    <div class="card">
+                        <h3>AWS Cost & SLA Calculator</h3>
+                        <div class="form-group">
+                            <label for="price-compute">EC2 Instance Capacity</label>
+                            <select id="price-compute" onchange="recalculatePricing()">
+                                <option value="t3.medium">t3.medium (2 vCPU, 4GB RAM) - Dev/Test (₹2,520/mo)</option>
+                                <option value="m5.large" selected>m5.large (2 vCPU, 8GB RAM) - Small Prod (₹5,810/mo)</option>
+                                <option value="c5.2xlarge">c5.2xlarge (8 vCPU, 16GB RAM) - High Computing (₹20,600/mo)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price-regions">Deployment Multi-Region Redundancy</label>
+                            <select id="price-regions" onchange="recalculatePricing()">
+                                <option value="1">Single Region (Primary) (1x)</option>
+                                <option value="2">Multi-Region Active/Passive (Disaster Recovery) (2x)</option>
+                                <option value="3">Multi-Region Active/Active (High Availability) (3x)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price-storage">S3 Storage Space (GBs)</label>
+                            <input type="range" id="price-storage" min="100" max="10000" value="1000" step="100" oninput="updateStorageLabel(this.value); recalculatePricing()">
+                            <span id="price-storage-val" class="slider-val">1000 GB (₹1,900/mo)</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="price-sla">Backup & RPO/RTO SLA Tier</label>
+                            <select id="price-sla" onchange="recalculatePricing()">
+                                <option value="bronze">Bronze (24hr RPO / 48hr RTO) (₹1,245/mo)</option>
+                                <option value="silver" selected>Silver (1hr RPO / 4hr RTO) (₹7,470/mo)</option>
+                                <option value="gold">Gold (Real-time Sync / Zero data loss) (₹23,240/mo)</option>
+                            </select>
+                        </div>
+                        <hr>
+                        <div class="cost-summary">
+                            <h4>Estimated Cloud Cost:</h4>
+                            <div>
+                                <span class="total-price" id="total-monthly-cost">₹0.00</span><span> / month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cost Breakdown chart -->
+                    <div class="card">
+                        <h3>Resource Cost Allocation Breakdown</h3>
+                        <div style="height: 250px;">
+                            <canvas id="billingChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Risk and exposure analytics -->
+                    <div class="card col-span-2">
+                        <h3>Regional Agricultural Risk Exposure</h3>
+                        <div class="metrics-row">
+                            <div class="metric-card">
+                                <span>Total Active Premiums</span>
+                                <h4 id="billing-premium">₹0.00</h4>
+                            </div>
+                            <div class="metric-card">
+                                <span>Approved Claims Payout</span>
+                                <h4 id="billing-claims">₹0.00</h4>
+                            </div>
+                            <div class="metric-card">
+                                <span>Loss Ratio</span>
+                                <h4 id="billing-ratio">0%</h4>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper-billing" style="height: 260px; margin-top: 1.5rem;">
+                            <canvas id="cropExposureChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="card col-span-2">
+                        <h3>AWS Budget Optimization & TCO Advisor</h3>
+                        <div class="optimization-grid">
+                            <div class="opt-card">
+                                <h5>1. Compute Savings Plans</h5>
+                                <p>Commit to a 1-year or 3-year term to reduce EC2 instances hourly cost by up to <strong>35%</strong> compared to standard On-Demand pricing.</p>
+                            </div>
+                            <div class="opt-card">
+                                <h5>2. S3 Lifecycle Rules</h5>
+                                <p>Automate transitioning DB backups older than 30 days to S3 Glacier Flexible Retrieval, reducing archive storage costs by <strong>75%</strong>.</p>
+                            </div>
+                            <div class="opt-card">
+                                <h5>3. Non-Production Scheduling</h5>
+                                <p>Auto-shut down development instances (`t3.medium`) outside business hours to save roughly <strong>30%</strong> on compute charges.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <p>CropInsure Agricultural Risk Cloud Platform • Semester IV Case Study</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+services:
+  web:
+    build: .
+    container_name: cropinsure_app
+    ports:
+      - "3694:3694"
+    environment:
+      - PORT=3694
+      - DB_HOST=db
+      - DB_USER=cropinsure_user
+      - DB_PASSWORD=cropinsure_secure_pass
+      - DB_NAME=cropinsure_db
+      - DB_PORT=3306
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - cropinsure_vpc
+
+  db:
+    image: mysql:8.0
+    container_name: cropinsure_mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=cropinsure_db
+      - MYSQL_USER=cropinsure_user
+      - MYSQL_PASSWORD=cropinsure_secure_pass
+      - MYSQL_ROOT_PASSWORD=cropinsure_root_pass
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+    networks:
+      - cropinsure_vpc
+
+volumes:
+  db_data:
+
+networks:
+  cropinsure_vpc:
+    driver: bridge
