@@ -42,10 +42,14 @@ fi
 echo "Compressing SQL database dump..."
 gzip -f "$BACKUP_DIR/$FILE_NAME"
 
-# Copy/Simulate upload to S3
-echo "Uploading archive to S3 bucket: s3://cropinsure-backups-us-east-1/"
-echo "-> AWS S3 Upload: aws s3 cp $BACKUP_DIR/$COMPRESSED_FILE s3://cropinsure-backups-us-east-1/$COMPRESSED_FILE"
-echo "[SUCCESS] Backup archived in S3 mock vault: $COMPRESSED_FILE ($(du -sh $BACKUP_DIR/$COMPRESSED_FILE | cut -f1))"
+# Upload to S3 bucket
+echo "Uploading archive to S3 bucket: s3://cropinsure-backups-mumbai/"
+if command -v aws &> /dev/null; then
+    aws s3 cp "$BACKUP_DIR/$COMPRESSED_FILE" "s3://cropinsure-backups-mumbai/$COMPRESSED_FILE" --only-show-errors
+    echo "[SUCCESS] Backup uploaded to S3: s3://cropinsure-backups-mumbai/$COMPRESSED_FILE"
+else
+    echo "[SIMULATION] AWS CLI not found. Backup saved locally: $COMPRESSED_FILE"
+fi
 
 # Log clean up: Keep only the 5 most recent backups
 echo "Pruning historical backups (Retention limit: 5)..."
