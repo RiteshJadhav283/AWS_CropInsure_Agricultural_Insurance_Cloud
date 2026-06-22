@@ -6,7 +6,7 @@ This document provides detailed estimates for the CropInsure Agricultural Insura
 
 ## 1. Core Services Price Breakdown
 
-All estimates are based on current **AWS US-East-1 (N. Virginia)** region pricing.
+All estimates are based on current **AWS ap-south-1 (Mumbai)** region pricing.
 
 ### A. Compute Instances (EC2)
 EC2 instances run our dockerized Express web server inside a private subnet.
@@ -75,7 +75,7 @@ gantt
 - **Total Infrastructure Cost**: **₹43,990 / month** (m5.large Multi-AZ + 2 EC2 instances + ALB + S3).
 
 ### Gold Tier (Enterprise - Multi-Region Deployment)
-- **Strategy**: Active-Passive setup across 2 AWS Regions (e.g., US-East-1 and US-West-2). RDS Global Databases (real-time sync), Route 53 DNS Failover.
+- **Strategy**: Active-Passive setup across 2 AWS Regions (e.g., ap-south-1 (Mumbai) and ap-southeast-1 (Singapore)). RDS Global Databases (real-time sync), Route 53 DNS Failover.
 - **RPO**: < 10 seconds | **RTO**: < 5 minutes
 - **Extra Cost**: Double compute cost, RDS Global DB replication, cross-region S3 copy.
 - **Total Infrastructure Cost**: **₹97,940 / month** (Double production stack + Global DB sync + Route 53 failover).

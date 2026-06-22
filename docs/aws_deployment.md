@@ -65,7 +65,7 @@ S3 is a storage drive in the cloud where you can put any file (images, PDFs, dat
 *   It is **highly durable (99.999999999% durability)**: AWS duplicates your file across at least 3 different physical buildings. Even if an entire AWS building is destroyed by a natural disaster, your backup is safe in the other two.
 
 #### 🎯 Why we used it in CropInsure:
-When our admin runner executes `backup.sh`, it dumps the MySQL database, zips it, and uploads it to an S3 bucket (`s3://cropinsure-backups-us-east-1`). This ensures we have a secure copy of all records for disaster recovery.
+When our admin runner executes `backup.sh`, it dumps the MySQL database, zips it, and uploads it to an S3 bucket (`s3://cropinsure-backups-mumbai`). This ensures we have a secure copy of all records for disaster recovery.
 
 ---
 

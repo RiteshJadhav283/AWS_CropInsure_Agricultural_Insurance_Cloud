@@ -74,7 +74,7 @@ Three separate Security Groups govern internal communication:
 ---
 
 ## 3. Storage & Disaster Recovery (S3 & RDS Backups)
-- **Amazon S3 (`s3://cropinsure-backups-us-east-1`)**: Used to store daily MySQL database dumps. Objects are configured with a lifecycle rule:
+- **Amazon S3 (`s3://cropinsure-backups-mumbai`)**: Used to store daily MySQL database dumps. Objects are configured with a lifecycle rule:
   - Transit backups to **S3 Standard** upon creation.
   - Automatically transition backups to **S3 Glacier Flexible Retrieval** after 30 days.
   - Permanently delete archive data after 1 year (compliance requirement).
@@ -87,7 +87,7 @@ The system enforces the Principle of Least Privilege:
 
 ### App Instance IAM Role
 Granted to the EC2 host via an Instance Profile.
-- **AWS S3 Access**: Allow `PutObject`, `ListBucket` to `s3://cropinsure-backups-us-east-1` (to upload backup dumps).
+- **AWS S3 Access**: Allow `PutObject`, `ListBucket` to `s3://cropinsure-backups-mumbai` (to upload backup dumps).
 - **AWS CloudWatch Access**: Allow `PutMetricData` (to stream custom application CPU/memory alarms).
 
 ### SysAdmin Group Policy
