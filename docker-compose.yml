@@ -14,6 +14,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - ./s3_mock_bucket:/usr/src/app/s3_mock_bucket
     networks:
       - cropinsure_vpc
 
