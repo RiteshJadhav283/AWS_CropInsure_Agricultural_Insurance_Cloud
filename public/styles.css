@@ -718,6 +718,12 @@ tr.clickable-row:hover {
     }
 }
 
+.chart-container {
+    position: relative;
+    height: 180px;
+    width: 100%;
+}
+
 footer {
     background: #ffffff;
     border-top: 1px solid var(--border-color);
